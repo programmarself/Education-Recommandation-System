@@ -81,7 +81,10 @@ rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Base
 search_term = st.sidebar.text_input("Search Resources", "")
 
 # Button to generate recommendations
-if st.sidebar.button("Get Recommendations"):
+get_recommendations = st.sidebar.button("Get Recommendations")
+
+# Logic to display recommendations or all resources
+if get_recommendations:
     # Filter resources by the selected education level, category, subject tags, and search term
     filtered_resources = resources[
         (resources['education_level'] == education_level) & 
@@ -116,9 +119,7 @@ if st.sidebar.button("Get Recommendations"):
             st.markdown("---")
     else:
         st.error("No resources found even after relaxing the filters.")
-
-# Display all resources if no filter is applied
-if not st.sidebar.button("Get Recommendations"):
+else:
     st.subheader("All Available Resources:")
     for index, row in resources.iterrows():
         st.markdown(f"### [{row['name']}]({row['url']})")
