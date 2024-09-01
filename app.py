@@ -58,8 +58,11 @@ if st.sidebar.button("Get Recommendations"):
     filtered_resources = resources[(resources['education_level'] == education_level) & (resources['category'].isin(category))]
     
     if filtered_resources.empty:
-        st.error("No resources found for the selected education level and category.")
-    else:
+        st.warning("No exact resources found for the selected education level and category.")
+        st.info("Showing resources for the selected education level regardless of category.")
+        filtered_resources = resources[resources['education_level'] == education_level]
+    
+    if not filtered_resources.empty:
         if rec_method == 'Content-Based':
             sample_resource = filtered_resources.iloc[0]['name']
             recs = get_content_based_recommendations(sample_resource)
@@ -78,3 +81,5 @@ if st.sidebar.button("Get Recommendations"):
             st.write(f"**Category:** {row['category']}")
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
+    else:
+        st.error("No resources found even after relaxing the filters.")
