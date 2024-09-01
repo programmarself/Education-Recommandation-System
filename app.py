@@ -88,7 +88,6 @@ if get_recommendations:
     ]
 
     if filtered_resources.empty:
-        st.warning("No resources found for the selected filters.")
         st.info("Showing all resources for the selected education level.")
         filtered_resources = resources[resources['education_level'] == education_level]
     
