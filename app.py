@@ -30,17 +30,6 @@ resources = pd.DataFrame({
     ]
 })
 
-# Define a mapping from topics to resources
-topic_to_resources = {
-    'types of speed': ['Khan Academy', 'MIT OpenCourseWare'],
-    'types of energy': ['Khan Academy', 'Coursera'],
-    'quantum mechanics': ['MIT OpenCourseWare', 'Coursera'],
-    'computer science': ['Coursera', 'LinkedIn Learning', 'Codecademy'],
-    'machine learning': ['Coursera', 'Udacity'],
-    'coding': ['Codecademy', 'LinkedIn Learning'],
-    'finance': ['Finance Academy', 'Coursera']
-}
-
 # Define recommendation functions
 def get_content_based_recommendations(resource_name):
     if resource_name not in resources['name'].values:
