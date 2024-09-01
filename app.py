@@ -1,14 +1,29 @@
 ﻿import streamlit as st
 import pandas as pd
 
-# Define the resources DataFrame with subject tags
+# Define the resources DataFrame with subject tags and URLs
 resources = pd.DataFrame({
     'resource_id': [1, 2, 3, 4, 5, 6],
     'name': ['Khan Academy', 'Coursera', 'edX', 'Duolingo', 'TED-Ed', 'Finance Academy'],
     'category': ['Educational Platform', 'Educational Platform', 'Educational Platform', 'Educational App', 'Educational Video', 'Educational Platform'],
-    'description': ['Free online courses for K-12', 'Online courses from universities', 'University-level courses', 'Language learning app', 'Educational videos on various topics', 'Finance and investment courses'],
+    'description': [
+        'Free online courses for K-12',
+        'Online courses from universities',
+        'University-level courses',
+        'Language learning app',
+        'Educational videos on various topics',
+        'Finance and investment courses'
+    ],
     'tags': ['math, science, physics', 'computer science, data science', 'engineering, humanities', 'language, vocabulary', 'technology, innovation', 'finance, economics'],
-    'education_level': ['K-12', 'Higher Education', 'Higher Education', 'Skill Development', 'K-12', 'Higher Education']
+    'education_level': ['K-12', 'Higher Education', 'Higher Education', 'Skill Development', 'K-12', 'Higher Education'],
+    'url': [
+        'https://www.khanacademy.org',
+        'https://www.coursera.org',
+        'https://www.edx.org',
+        'https://www.duolingo.com',
+        'https://ed.ted.com',
+        'https://www.financeacademy.com'
+    ]
 })
 
 # Sample function to simulate content-based recommendations
@@ -84,10 +99,10 @@ if st.sidebar.button("Get Recommendations"):
         else:
             recs = get_ml_recommendations(user_id)
         
-        # Display recommendations
+        # Display recommendations as clickable links
         st.subheader("Recommended Resources:")
         for index, row in recs.iterrows():
-            st.markdown(f"### {row['name']}")
+            st.markdown(f"### [{row['name']}]({row['url']})")
             st.write(f"**Category:** {row['category']}")
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
