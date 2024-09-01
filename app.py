@@ -1,14 +1,14 @@
 ﻿import streamlit as st
 import pandas as pd
 
-# Define the resources DataFrame
+# Define the resources DataFrame with subject tags
 resources = pd.DataFrame({
-    'resource_id': [1, 2, 3, 4, 5],
-    'name': ['Khan Academy', 'Coursera', 'edX', 'Duolingo', 'TED-Ed'],
-    'category': ['Educational Platform', 'Educational Platform', 'Educational Platform', 'Educational App', 'Educational Video'],
-    'description': ['Free online courses for K-12', 'Online courses from universities', 'University-level courses', 'Language learning app', 'Educational videos on various topics'],
-    'tags': ['math, science', 'computer science, data science', 'engineering, humanities', 'language, vocabulary', 'technology, innovation'],
-    'education_level': ['K-12', 'Higher Education', 'Higher Education', 'Skill Development', 'K-12']
+    'resource_id': [1, 2, 3, 4, 5, 6],
+    'name': ['Khan Academy', 'Coursera', 'edX', 'Duolingo', 'TED-Ed', 'Finance Academy'],
+    'category': ['Educational Platform', 'Educational Platform', 'Educational Platform', 'Educational App', 'Educational Video', 'Educational Platform'],
+    'description': ['Free online courses for K-12', 'Online courses from universities', 'University-level courses', 'Language learning app', 'Educational videos on various topics', 'Finance and investment courses'],
+    'tags': ['math, science, physics', 'computer science, data science', 'engineering, humanities', 'language, vocabulary', 'technology, innovation', 'finance, economics'],
+    'education_level': ['K-12', 'Higher Education', 'Higher Education', 'Skill Development', 'K-12', 'Higher Education']
 })
 
 # Sample function to simulate content-based recommendations
@@ -46,6 +46,12 @@ user_id = st.sidebar.number_input("Enter User ID", min_value=1, value=1, step=1)
 # Educational Level selection
 education_level = st.sidebar.selectbox("Select Education Level", ['K-12', 'Higher Education', 'Skill Development'])
 
+# Subject Tags selection
+subject_tags = st.sidebar.multiselect(
+    "Select Preferred Subjects",
+    ['physics', 'computer science', 'math', 'chemistry', 'biology', 'finance', 'economics', 'language', 'technology']
+)
+
 # Preferred Category
 category = st.sidebar.multiselect("Select Preferred Categories", resources['category'].unique())
 
@@ -54,12 +60,16 @@ rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Base
 
 # Button to generate recommendations
 if st.sidebar.button("Get Recommendations"):
-    # Filter resources by the selected education level and category
-    filtered_resources = resources[(resources['education_level'] == education_level) & (resources['category'].isin(category))]
+    # Filter resources by the selected education level, category, and subject tags
+    filtered_resources = resources[
+        (resources['education_level'] == education_level) & 
+        (resources['category'].isin(category)) & 
+        (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags)))
+    ]
     
     if filtered_resources.empty:
-        st.warning("No exact resources found for the selected education level and category.")
-        st.info("Showing resources for the selected education level regardless of category.")
+        st.warning("No exact resources found for the selected education level, categories, and subjects.")
+        st.info("Showing resources for the selected education level regardless of subjects.")
         filtered_resources = resources[resources['education_level'] == education_level]
     
     if not filtered_resources.empty:
