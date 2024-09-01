@@ -45,39 +45,61 @@ topic_to_resources = {
 def get_content_based_recommendations(resource_name):
     if resource_name not in resources['name'].values:
         return pd.DataFrame()  # Return an empty DataFrame if the resource is not found
-    # Simple content-based recommendation (replace with actual logic)
     return resources[resources['name'] != resource_name]
 
 def get_collaborative_recommendations(user_id):
-    # Placeholder for collaborative filtering
     return resources.sample(3)
 
 def get_hybrid_recommendations(user_id, resource_name):
-    # Placeholder for hybrid filtering
     return resources.sample(3)
 
 def get_ml_recommendations(user_id):
-    # Placeholder for machine learning-based recommendations
     return resources.sample(3)
 
 # Streamlit application code
 
 # Title
-st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Educational Resource Recommender System</h1>", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    .title {
+        text-align: center;
+        color: #fff;
+        font-size: 48px;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(45deg, #6a1b9a, #ff6f00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    </style>
+    <div class="title">Educational Resource Recommender System</div>
+    """, unsafe_allow_html=True)
 
 # Sidebar for user input
-st.sidebar.markdown(
-    """
+st.sidebar.markdown("""
     <style>
     .sidebar .sidebar-content {
-        background-color: #f4f4f4;
+        background: linear-gradient(180deg, #e3f2fd, #bbdefb);
         color: #333;
         font-size: 16px;
-        border-radius: 10px;
+        border-radius: 15px;
         padding: 20px;
     }
     .sidebar .sidebar-content input, .sidebar .sidebar-content select, .sidebar .sidebar-content button {
         margin-bottom: 10px;
+        border-radius: 10px;
+    }
+    .sidebar .sidebar-content button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .sidebar .sidebar-content button:hover {
+        background-color: #0056b3;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -121,10 +143,12 @@ if get_recommendations:
         for index, row in recs.iterrows():
             st.markdown(
                 f"""
-                <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    <h3><a href="{row['url']}" style="text-decoration: none; color: #007bff;">{row['name']}</a></h3>
-                    <p><strong>Category:</strong> {row['category']}</p>
-                    <p><strong>Description:</strong> {row['description']}</p>
+                <div style="border: 1px solid #ddd; border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
+                    <a href="{row['url']}" style="text-decoration: none; color: #333;">
+                        <h3 style="margin: 0; color: #007bff;">{row['name']}</h3>
+                        <p><strong>Category:</strong> {row['category']}</p>
+                        <p><strong>Description:</strong> {row['description']}</p>
+                    </a>
                 </div>
                 """, unsafe_allow_html=True
             )
@@ -133,22 +157,39 @@ if get_recommendations:
         for index, row in resources.iterrows():
             st.markdown(
                 f"""
-                <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    <h3><a href="{row['url']}" style="text-decoration: none; color: #007bff;">{row['name']}</a></h3>
-                    <p><strong>Category:</strong> {row['category']}</p>
-                    <p><strong>Description:</strong> {row['description']}</p>
+                <div style="border: 1px solid #ddd; border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
+                    <a href="{row['url']}" style="text-decoration: none; color: #333;">
+                        <h3 style="margin: 0; color: #007bff;">{row['name']}</h3>
+                        <p><strong>Category:</strong> {row['category']}</p>
+                        <p><strong>Description:</strong> {row['description']}</p>
+                    </a>
                 </div>
                 """, unsafe_allow_html=True
             )
 
 # Footer
-st.markdown(
-    """
-    <div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-top: 1px solid #ddd;">
-        <p style="font-size: 16px; color: #333; margin-bottom: 5px;">Developed By: Irfan Ullah Khan</p>
-        <p style="font-size: 16px; color: #007bff; margin-bottom: 5px;"><a href="https://flowcv.me/ikm" target="_blank" style="text-decoration: none; color: #007bff;">https://flowcv.me/ikm</a></p>
-        <p style="font-size: 16px; color: #333; margin-bottom: 5px;">Developed For: Essential Generative AI Training</p>
-        <p style="font-size: 16px; color: #333;">Conducted By: PAK ANGELS, iCodeGuru, ASPIRE PAKISTAN</p>
+st.markdown("""
+    <style>
+    .footer {
+        text-align: center;
+        padding: 30px;
+        background: #f1f1f1;
+        border-top: 1px solid #ddd;
+        color: #333;
+    }
+    .footer a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .footer a:hover {
+        text-decoration: underline;
+    }
+    </style>
+    <div class="footer">
+        <p><strong>Developed By:</strong> Irfan Ullah Khan</p>
+        <p><a href="https://flowcv.me/ikm" target="_blank">https://flowcv.me/ikm</a></p>
+        <p><strong>Developed For:</strong> Essential Generative AI Training</p>
+        <p><strong>Conducted By:</strong> PAK ANGELS, iCodeGuru, ASPIRE PAKISTAN</p>
     </div>
-    """, unsafe_allow_html=True
-)
+    """, unsafe_allow_html=True)
