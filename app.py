@@ -63,30 +63,34 @@ def get_ml_recommendations(user_id):
 # Streamlit application code
 
 # Title
-st.title("Educational Resource Recommender System")
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Educational Resource Recommender System</h1>", unsafe_allow_html=True)
 
 # Sidebar for user input
-st.sidebar.header("User Preferences")
+st.sidebar.markdown(
+    """
+    <style>
+    .sidebar .sidebar-content {
+        background-color: #f4f4f4;
+        color: #333;
+        font-size: 16px;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    .sidebar .sidebar-content input, .sidebar .sidebar-content select, .sidebar .sidebar-content button {
+        margin-bottom: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# User ID input
+# Sidebar widgets
 user_id = st.sidebar.number_input("Enter User ID", min_value=1, value=1, step=1)
-
-# Educational Level selection
 education_level = st.sidebar.selectbox("Select Education Level", ['K-12', 'Higher Education', 'Skill Development'])
-
-# Subject Tags selection
 subject_tags = st.sidebar.multiselect(
     "Select Preferred Subjects",
     ['physics', 'computer science', 'math', 'chemistry', 'biology', 'finance', 'economics', 'language', 'technology', 'coding', 'problem-solving', 'machine learning', 'AI', 'web development']
 )
-
-# Preferred Category
 category = st.sidebar.multiselect("Select Preferred Categories", resources['category'].unique())
-
-# Recommendation Method
 rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Based', 'Collaborative', 'Hybrid', 'Machine Learning'])
-
-# Button to generate recommendations
 get_recommendations = st.sidebar.button("Get Recommendations")
 
 # Logic to display recommendations or all resources
@@ -112,29 +116,39 @@ if get_recommendations:
         else:
             recs = get_ml_recommendations(user_id)
         
-        # Display recommendations as clickable links
+        # Display recommendations in a card-like format
         st.subheader("Recommended Resources:")
         for index, row in recs.iterrows():
-            st.markdown(f"### [{row['name']}]({row['url']})")
-            st.write(f"**Category:** {row['category']}")
-            st.write(f"**Description:** {row['description']}")
-            st.markdown("---")
+            st.markdown(
+                f"""
+                <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <h3><a href="{row['url']}" style="text-decoration: none; color: #007bff;">{row['name']}</a></h3>
+                    <p><strong>Category:</strong> {row['category']}</p>
+                    <p><strong>Description:</strong> {row['description']}</p>
+                </div>
+                """, unsafe_allow_html=True
+            )
     else:
         st.subheader("All Available Resources:")
         for index, row in resources.iterrows():
-            st.markdown(f"### [{row['name']}]({row['url']})")
-            st.write(f"**Category:** {row['category']}")
-            st.write(f"**Description:** {row['description']}")
-            st.markdown("---")
+            st.markdown(
+                f"""
+                <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <h3><a href="{row['url']}" style="text-decoration: none; color: #007bff;">{row['name']}</a></h3>
+                    <p><strong>Category:</strong> {row['category']}</p>
+                    <p><strong>Description:</strong> {row['description']}</p>
+                </div>
+                """, unsafe_allow_html=True
+            )
 
 # Footer
 st.markdown(
     """
-    <div style="text-align: center; margin-top: 50px;">
-        <p style="font-size: 14px; color: #777;">Developed By: Irfan Ullah Khan</p>
-        <p style="font-size: 14px; color: #777;"><a href="https://flowcv.me/ikm" target="_blank" style="color: #007bff;">https://flowcv.me/ikm</a></p>
-        <p style="font-size: 14px; color: #777;">Developed For: Essential Generative AI Training</p>
-        <p style="font-size: 14px; color: #777;">Conducted By: PAK ANGELS, iCodeGuru, ASPIRE PAKISTAN</p>
+    <div style="text-align: center; padding: 20px; background-color: #f8f9fa; border-top: 1px solid #ddd;">
+        <p style="font-size: 16px; color: #333; margin-bottom: 5px;">Developed By: Irfan Ullah Khan</p>
+        <p style="font-size: 16px; color: #007bff; margin-bottom: 5px;"><a href="https://flowcv.me/ikm" target="_blank" style="text-decoration: none; color: #007bff;">https://flowcv.me/ikm</a></p>
+        <p style="font-size: 16px; color: #333; margin-bottom: 5px;">Developed For: Essential Generative AI Training</p>
+        <p style="font-size: 16px; color: #333;">Conducted By: PAK ANGELS, iCodeGuru, ASPIRE PAKISTAN</p>
     </div>
     """, unsafe_allow_html=True
 )
