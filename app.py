@@ -95,13 +95,19 @@ get_recommendations = st.sidebar.button("Get Recommendations")
 # Logic to display recommendations or all resources
 if get_recommendations:
     if search_term:
-        # Use the predefined topic-to-resources mapping
+        # Search term handling
         search_term_lower = search_term.lower()
-        matched_resources = [name for term, names in topic_to_resources.items() if search_term_lower in term]
+        matched_resources = []
+
+        # Find matching resources based on the topic-to-resources mapping
+        for term, names in topic_to_resources.items():
+            if search_term_lower in term.lower():
+                matched_resources.extend(names)
+
         if matched_resources:
             filtered_resources = resources[resources['name'].isin(matched_resources)]
         else:
-            # Search based on general criteria
+            # If no exact matches found, search based on broader criteria
             filtered_resources = resources[
                 (resources['education_level'] == education_level) & 
                 (resources['category'].isin(category)) & 
@@ -110,8 +116,8 @@ if get_recommendations:
             ]
         
         if filtered_resources.empty:
-            st.warning("No exact resources found for the selected filters.")
-            st.info("Showing resources for the selected education level regardless of subjects.")
+            st.warning("No resources found for the selected filters.")
+            st.info("Showing all resources for the selected education level.")
             filtered_resources = resources[resources['education_level'] == education_level]
     
         if not filtered_resources.empty:
