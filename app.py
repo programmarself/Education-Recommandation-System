@@ -90,6 +90,9 @@ st.markdown("""
     .sidebar .sidebar-content input, .sidebar .sidebar-content select, .sidebar .sidebar-content button {
         margin-bottom: 10px;
         border-radius: 10px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        font-size: 16px;
     }
     .sidebar .sidebar-content button {
         background-color: #007bff;
@@ -101,6 +104,25 @@ st.markdown("""
     }
     .sidebar .sidebar-content button:hover {
         background-color: #0056b3;
+    }
+    .resource-card {
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .resource-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+    .resource-title {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .resource-title:hover {
+        text-decoration: underline;
     }
     .footer {
         text-align: center;
@@ -161,9 +183,9 @@ if get_recommendations:
         for index, row in recs.iterrows():
             st.markdown(
                 f"""
-                <div style="border: 1px solid #ddd; border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
-                    <a href="{row['url']}" style="text-decoration: none; color: #333;">
-                        <h3 style="margin: 0; color: #007bff;">{row['name']}</h3>
+                <div class="resource-card">
+                    <a href="{row['url']}" class="resource-title" target="_blank">
+                        <h3 style="margin: 0;">{row['name']}</h3>
                         <p><strong>Category:</strong> {row['category']}</p>
                         <p><strong>Description:</strong> {row['description']}</p>
                     </a>
@@ -175,9 +197,9 @@ if get_recommendations:
         for index, row in resources.iterrows():
             st.markdown(
                 f"""
-                <div style="border: 1px solid #ddd; border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
-                    <a href="{row['url']}" style="text-decoration: none; color: #333;">
-                        <h3 style="margin: 0; color: #007bff;">{row['name']}</h3>
+                <div class="resource-card">
+                    <a href="{row['url']}" class="resource-title" target="_blank">
+                        <h3 style="margin: 0;">{row['name']}</h3>
                         <p><strong>Category:</strong> {row['category']}</p>
                         <p><strong>Description:</strong> {row['description']}</p>
                     </a>
