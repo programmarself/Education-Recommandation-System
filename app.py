@@ -58,7 +58,10 @@ def get_ml_recommendations(user_id):
 
 # Streamlit application code
 
-# Title
+# Page configuration
+st.set_page_config(page_title="Educational Resource Recommender System", layout="wide")
+
+# Title with background color
 st.markdown("""
     <style>
     .title {
@@ -72,13 +75,11 @@ st.markdown("""
         padding: 20px;
         border-radius: 10px;
     }
-    </style>
-    <div class="title">Educational Resource Recommender System</div>
-    """, unsafe_allow_html=True)
-
-# Sidebar for user input
-st.sidebar.markdown("""
-    <style>
+    .background {
+        background-color: #e3f2fd; /* Light blue background */
+        padding: 20px;
+        border-radius: 15px;
+    }
     .sidebar .sidebar-content {
         background: linear-gradient(180deg, #e3f2fd, #bbdefb);
         color: #333;
@@ -101,7 +102,24 @@ st.sidebar.markdown("""
     .sidebar .sidebar-content button:hover {
         background-color: #0056b3;
     }
+    .footer {
+        text-align: center;
+        padding: 30px;
+        background: #f1f1f1;
+        border-top: 1px solid #ddd;
+        color: #333;
+    }
+    .footer a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .footer a:hover {
+        text-decoration: underline;
+    }
     </style>
+    <div class="title">Educational Resource Recommender System</div>
+    <div class="background">
     """, unsafe_allow_html=True)
 
 # Sidebar widgets
@@ -169,23 +187,7 @@ if get_recommendations:
 
 # Footer
 st.markdown("""
-    <style>
-    .footer {
-        text-align: center;
-        padding: 30px;
-        background: #f1f1f1;
-        border-top: 1px solid #ddd;
-        color: #333;
-    }
-    .footer a {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: bold;
-    }
-    .footer a:hover {
-        text-decoration: underline;
-    }
-    </style>
+    </div>
     <div class="footer">
         <p><strong>Developed By:</strong> Irfan Ullah Khan</p>
         <p><a href="https://flowcv.me/ikm" target="_blank">https://flowcv.me/ikm</a></p>
