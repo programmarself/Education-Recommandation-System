@@ -30,6 +30,17 @@ resources = pd.DataFrame({
     ]
 })
 
+# Define a mapping from topics to resources
+topic_to_resources = {
+    'types of speed': ['Khan Academy', 'MIT OpenCourseWare'],
+    'types of energy': ['Khan Academy', 'Coursera'],
+    'quantum mechanics': ['MIT OpenCourseWare', 'Coursera'],
+    'computer science': ['Coursera', 'LinkedIn Learning', 'Codecademy'],
+    'machine learning': ['Coursera', 'Udacity'],
+    'coding': ['Codecademy', 'LinkedIn Learning'],
+    'finance': ['Finance Academy', 'Coursera']
+}
+
 # Define recommendation functions
 def get_content_based_recommendations(resource_name):
     if resource_name not in resources['name'].values:
@@ -50,10 +61,9 @@ def get_ml_recommendations(user_id):
     return resources.sample(3)
 
 # Streamlit application code
-st.set_page_config(page_title="Educational Resource Recommender", page_icon=":book:", layout="wide")
 
+# Title
 st.title("Educational Resource Recommender System")
-st.markdown("<hr>", unsafe_allow_html=True)
 
 # Sidebar for user input
 st.sidebar.header("User Preferences")
@@ -86,9 +96,8 @@ if get_recommendations:
         (resources['category'].isin(category)) & 
         (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags)))
     ]
-
+    
     if filtered_resources.empty:
-        st.info("Showing all resources for the selected education level.")
         filtered_resources = resources[resources['education_level'] == education_level]
     
     if not filtered_resources.empty:
@@ -103,6 +112,7 @@ if get_recommendations:
         else:
             recs = get_ml_recommendations(user_id)
         
+        # Display recommendations as clickable links
         st.subheader("Recommended Resources:")
         for index, row in recs.iterrows():
             st.markdown(f"### [{row['name']}]({row['url']})")
@@ -110,14 +120,21 @@ if get_recommendations:
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
     else:
-        st.error("No resources found even after relaxing the filters.")
-else:
-    st.subheader("All Available Resources:")
-    for index, row in resources.iterrows():
-        st.markdown(f"### [{row['name']}]({row['url']})")
-        st.write(f"**Category:** {row['category']}")
-        st.write(f"**Description:** {row['description']}")
-        st.markdown("---")
+        st.subheader("All Available Resources:")
+        for index, row in resources.iterrows():
+            st.markdown(f"### [{row['name']}]({row['url']})")
+            st.write(f"**Category:** {row['category']}")
+            st.write(f"**Description:** {row['description']}")
+            st.markdown("---")
 
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("**Developed By:** Irfan Ullah Khan", unsafe_allow_html=True)
+# Footer
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 50px;">
+        <p style="font-size: 14px; color: #777;">Developed By: Irfan Ullah Khan</p>
+        <p style="font-size: 14px; color: #777;"><a href="https://flowcv.me/ikm" target="_blank" style="color: #007bff;">https://flowcv.me/ikm</a></p>
+        <p style="font-size: 14px; color: #777;">Developed For: Essential Generative AI Training</p>
+        <p style="font-size: 14px; color: #777;">Conducted By: PAK ANGELS, iCodeGuru, ASPIRE PAKISTAN</p>
+    </div>
+    """, unsafe_allow_html=True
+)
