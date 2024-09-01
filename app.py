@@ -104,9 +104,12 @@ if get_recommendations:
             if search_term_lower in term.lower():
                 matched_resources.extend(names)
 
+        st.write(f"Matched Resources Based on Topic Mapping: {matched_resources}")
+
         if matched_resources:
             filtered_resources = resources[resources['name'].isin(matched_resources)]
         else:
+            st.write("No direct matches found, applying broader filters...")
             # If no exact matches found, search based on broader criteria
             filtered_resources = resources[
                 (resources['education_level'] == education_level) & 
@@ -115,6 +118,8 @@ if get_recommendations:
                 (resources['name'].str.contains(search_term, case=False) | resources['description'].str.contains(search_term, case=False))
             ]
         
+        st.write(f"Filtered Resources: {filtered_resources}")
+
         if filtered_resources.empty:
             st.warning("No resources found for the selected filters.")
             st.info("Showing all resources for the selected education level.")
