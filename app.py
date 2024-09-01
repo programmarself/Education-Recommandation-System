@@ -1,7 +1,7 @@
 ﻿import streamlit as st
 import pandas as pd
 
-# Define the extended resources DataFrame with more sites, categories, tags, and URLs
+# Define the extended resources DataFrame with more detailed mappings
 resources = pd.DataFrame({
     'resource_id': list(range(1, 13)),
     'name': [
@@ -29,6 +29,17 @@ resources = pd.DataFrame({
         'https://www.codecademy.com', 'https://www.linkedin.com/learning', 'https://www.udacity.com', 'https://ocw.mit.edu', 'https://www.futurelearn.com', 'https://www.brilliant.org'
     ]
 })
+
+# Define a mapping from specific topics to resources
+topic_to_resources = {
+    'types of speed': resources[resources['tags'].str.contains('physics', case=False)],
+    'types of energy': resources[resources['tags'].str.contains('physics', case=False)],
+    'quantum mechanics': resources[resources['tags'].str.contains('physics', case=False)],
+    'computer science': resources[resources['tags'].str.contains('computer science', case=False)],
+    'machine learning': resources[resources['tags'].str.contains('machine learning', case=False)],
+    'coding': resources[resources['tags'].str.contains('coding', case=False)],
+    'finance': resources[resources['tags'].str.contains('finance', case=False)]
+}
 
 # Sample function to simulate content-based recommendations
 def get_content_based_recommendations(resource_name):
@@ -78,51 +89,55 @@ category = st.sidebar.multiselect("Select Preferred Categories", resources['cate
 rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Based', 'Collaborative', 'Hybrid', 'Machine Learning'])
 
 # Search bar
-search_term = st.sidebar.text_input("Search Resources", "")
+search_term = st.sidebar.text_input("Search Topics", "")
 
 # Button to generate recommendations
 get_recommendations = st.sidebar.button("Get Recommendations")
 
 # Logic to display recommendations or all resources
 if get_recommendations:
-    # Filter resources by the selected education level, category, subject tags, and search term
-    filtered_resources = resources[
-        (resources['education_level'] == education_level) & 
-        (resources['category'].isin(category)) & 
-        (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags))) &
-        (resources['name'].str.contains(search_term, case=False) | resources['description'].str.contains(search_term, case=False))
-    ]
-    
-    if filtered_resources.empty:
-        st.warning("No exact resources found for the selected filters.")
-        st.info("Showing resources for the selected education level regardless of subjects.")
-        filtered_resources = resources[resources['education_level'] == education_level]
-    
-    if not filtered_resources.empty:
-        if rec_method == 'Content-Based':
-            sample_resource = filtered_resources.iloc[0]['name']
-            recs = get_content_based_recommendations(sample_resource)
-        elif rec_method == 'Collaborative':
-            recs = get_collaborative_recommendations(user_id)
-        elif rec_method == 'Hybrid':
-            sample_resource = filtered_resources.iloc[0]['name']
-            recs = get_hybrid_recommendations(user_id, sample_resource)
+    if search_term:
+        # Use the predefined topic-to-resources mapping
+        if search_term.lower() in topic_to_resources:
+            filtered_resources = topic_to_resources[search_term.lower()]
         else:
-            recs = get_ml_recommendations(user_id)
+            filtered_resources = resources[
+                (resources['education_level'] == education_level) & 
+                (resources['category'].isin(category)) & 
+                (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags))) &
+                (resources['name'].str.contains(search_term, case=False) | resources['description'].str.contains(search_term, case=False))
+            ]
         
-        # Display recommendations as clickable links
-        st.subheader("Recommended Resources:")
-        for index, row in recs.iterrows():
+        if filtered_resources.empty:
+            st.warning("No exact resources found for the selected filters.")
+            st.info("Showing resources for the selected education level regardless of subjects.")
+            filtered_resources = resources[resources['education_level'] == education_level]
+    
+        if not filtered_resources.empty:
+            if rec_method == 'Content-Based':
+                sample_resource = filtered_resources.iloc[0]['name']
+                recs = get_content_based_recommendations(sample_resource)
+            elif rec_method == 'Collaborative':
+                recs = get_collaborative_recommendations(user_id)
+            elif rec_method == 'Hybrid':
+                sample_resource = filtered_resources.iloc[0]['name']
+                recs = get_hybrid_recommendations(user_id, sample_resource)
+            else:
+                recs = get_ml_recommendations(user_id)
+            
+            # Display recommendations as clickable links
+            st.subheader("Recommended Resources:")
+            for index, row in recs.iterrows():
+                st.markdown(f"### [{row['name']}]({row['url']})")
+                st.write(f"**Category:** {row['category']}")
+                st.write(f"**Description:** {row['description']}")
+                st.markdown("---")
+        else:
+            st.error("No resources found even after relaxing the filters.")
+    else:
+        st.subheader("All Available Resources:")
+        for index, row in resources.iterrows():
             st.markdown(f"### [{row['name']}]({row['url']})")
             st.write(f"**Category:** {row['category']}")
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
-    else:
-        st.error("No resources found even after relaxing the filters.")
-else:
-    st.subheader("All Available Resources:")
-    for index, row in resources.iterrows():
-        st.markdown(f"### [{row['name']}]({row['url']})")
-        st.write(f"**Category:** {row['category']}")
-        st.write(f"**Description:** {row['description']}")
-        st.markdown("---")
