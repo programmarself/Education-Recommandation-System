@@ -88,8 +88,7 @@ if get_recommendations:
     ]
     
     if filtered_resources.empty:
-        st.warning("No resources found for the selected filters.")
-        st.info("Showing all resources for the selected education level.")
+        # Show all resources for the selected education level if no filtered results
         filtered_resources = resources[resources['education_level'] == education_level]
     
     if not filtered_resources.empty:
@@ -111,8 +110,6 @@ if get_recommendations:
             st.write(f"**Category:** {row['category']}")
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
-    else:
-        st.error("No resources found even after relaxing the filters.")
 else:
     st.subheader("All Available Resources:")
     for index, row in resources.iterrows():
