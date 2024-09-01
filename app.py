@@ -13,27 +13,23 @@ resources = pd.DataFrame({
 
 # Sample function to simulate content-based recommendations
 def get_content_based_recommendations(resource_name):
-    # Just a placeholder function
-    # In actual implementation, you'd compute similarity scores
+    # Placeholder function: you'd compute similarity scores in a real implementation
     similar_resources = resources[resources['name'] != resource_name]
     return similar_resources
 
 # Sample function to simulate collaborative filtering recommendations
 def get_collaborative_recommendations(user_id):
-    # Just a placeholder function
-    # In actual implementation, you'd use user-based collaborative filtering
+    # Placeholder function: you'd use user-based collaborative filtering in a real implementation
     return resources.sample(3)
 
 # Sample function to simulate hybrid recommendations
 def get_hybrid_recommendations(user_id, resource_name):
-    # Just a placeholder function
-    # In actual implementation, you'd combine content-based and collaborative filtering
+    # Placeholder function: you'd combine content-based and collaborative filtering in a real implementation
     return resources.sample(3)
 
 # Sample function to simulate machine learning recommendations
 def get_ml_recommendations(user_id):
-    # Just a placeholder function
-    # In actual implementation, you'd use a trained ML model
+    # Placeholder function: you'd use a trained ML model in a real implementation
     return resources.sample(3)
 
 # Streamlit application code
@@ -58,22 +54,27 @@ rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Base
 
 # Button to generate recommendations
 if st.sidebar.button("Get Recommendations"):
-    if rec_method == 'Content-Based':
-        # For simplicity, using the first resource in selected category and level
-        sample_resource = resources[(resources['education_level'] == education_level) & (resources['category'].isin(category))].iloc[0]['name']
-        recs = get_content_based_recommendations(sample_resource)
-    elif rec_method == 'Collaborative':
-        recs = get_collaborative_recommendations(user_id)
-    elif rec_method == 'Hybrid':
-        sample_resource = resources[(resources['education_level'] == education_level) & (resources['category'].isin(category))].iloc[0]['name']
-        recs = get_hybrid_recommendations(user_id, sample_resource)
-    else:
-        recs = get_ml_recommendations(user_id)
+    # Filter resources by the selected education level and category
+    filtered_resources = resources[(resources['education_level'] == education_level) & (resources['category'].isin(category))]
     
-    # Display recommendations
-    st.subheader("Recommended Resources:")
-    for index, row in recs.iterrows():
-        st.markdown(f"### {row['name']}")
-        st.write(f"**Category:** {row['category']}")
-        st.write(f"**Description:** {row['description']}")
-        st.markdown("---")
+    if filtered_resources.empty:
+        st.error("No resources found for the selected education level and category.")
+    else:
+        if rec_method == 'Content-Based':
+            sample_resource = filtered_resources.iloc[0]['name']
+            recs = get_content_based_recommendations(sample_resource)
+        elif rec_method == 'Collaborative':
+            recs = get_collaborative_recommendations(user_id)
+        elif rec_method == 'Hybrid':
+            sample_resource = filtered_resources.iloc[0]['name']
+            recs = get_hybrid_recommendations(user_id, sample_resource)
+        else:
+            recs = get_ml_recommendations(user_id)
+        
+        # Display recommendations
+        st.subheader("Recommended Resources:")
+        for index, row in recs.iterrows():
+            st.markdown(f"### {row['name']}")
+            st.write(f"**Category:** {row['category']}")
+            st.write(f"**Description:** {row['description']}")
+            st.markdown("---")
