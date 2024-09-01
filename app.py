@@ -1,28 +1,32 @@
 ﻿import streamlit as st
 import pandas as pd
 
-# Define the resources DataFrame with subject tags and URLs
+# Define the extended resources DataFrame with more sites, categories, tags, and URLs
 resources = pd.DataFrame({
-    'resource_id': [1, 2, 3, 4, 5, 6],
-    'name': ['Khan Academy', 'Coursera', 'edX', 'Duolingo', 'TED-Ed', 'Finance Academy'],
-    'category': ['Educational Platform', 'Educational Platform', 'Educational Platform', 'Educational App', 'Educational Video', 'Educational Platform'],
-    'description': [
-        'Free online courses for K-12',
-        'Online courses from universities',
-        'University-level courses',
-        'Language learning app',
-        'Educational videos on various topics',
-        'Finance and investment courses'
+    'resource_id': list(range(1, 13)),
+    'name': [
+        'Khan Academy', 'Coursera', 'edX', 'Duolingo', 'TED-Ed', 'Finance Academy',
+        'Codeacademy', 'LinkedIn Learning', 'Udacity', 'MIT OpenCourseWare', 'FutureLearn', 'Brilliant'
     ],
-    'tags': ['math, science, physics', 'computer science, data science', 'engineering, humanities', 'language, vocabulary', 'technology, innovation', 'finance, economics'],
-    'education_level': ['K-12', 'Higher Education', 'Higher Education', 'Skill Development', 'K-12', 'Higher Education'],
+    'category': [
+        'Educational Platform', 'Educational Platform', 'Educational Platform', 'Educational App', 'Educational Video', 'Educational Platform',
+        'Coding Platform', 'Educational Platform', 'Coding Platform', 'University Courses', 'Educational Platform', 'Problem-Solving Platform'
+    ],
+    'description': [
+        'Free online courses for K-12', 'Online courses from universities', 'University-level courses', 'Language learning app', 'Educational videos on various topics', 'Finance and investment courses',
+        'Learn to code interactively', 'Courses from experts in various fields', 'Nanodegree programs in tech', 'Free lecture notes, exams, and videos', 'Courses from top universities and organizations', 'Interactive learning for STEM subjects'
+    ],
+    'tags': [
+        'math, science, physics', 'computer science, data science', 'engineering, humanities', 'language, vocabulary', 'technology, innovation', 'finance, economics',
+        'coding, programming, web development', 'business, design, technology', 'machine learning, AI, data science', 'engineering, computer science, physics', 'online learning, universities', 'math, logic, problem-solving'
+    ],
+    'education_level': [
+        'K-12', 'Higher Education', 'Higher Education', 'Skill Development', 'K-12', 'Higher Education',
+        'Skill Development', 'Higher Education', 'Higher Education', 'Higher Education', 'Higher Education', 'Skill Development'
+    ],
     'url': [
-        'https://www.khanacademy.org',
-        'https://www.coursera.org',
-        'https://www.edx.org',
-        'https://www.duolingo.com',
-        'https://ed.ted.com',
-        'https://www.financeacademy.com'
+        'https://www.khanacademy.org', 'https://www.coursera.org', 'https://www.edx.org', 'https://www.duolingo.com', 'https://ed.ted.com', 'https://www.financeacademy.com',
+        'https://www.codecademy.com', 'https://www.linkedin.com/learning', 'https://www.udacity.com', 'https://ocw.mit.edu', 'https://www.futurelearn.com', 'https://www.brilliant.org'
     ]
 })
 
@@ -64,7 +68,7 @@ education_level = st.sidebar.selectbox("Select Education Level", ['K-12', 'Highe
 # Subject Tags selection
 subject_tags = st.sidebar.multiselect(
     "Select Preferred Subjects",
-    ['physics', 'computer science', 'math', 'chemistry', 'biology', 'finance', 'economics', 'language', 'technology']
+    ['physics', 'computer science', 'math', 'chemistry', 'biology', 'finance', 'economics', 'language', 'technology', 'coding', 'problem-solving', 'machine learning', 'AI', 'web development']
 )
 
 # Preferred Category
@@ -73,17 +77,21 @@ category = st.sidebar.multiselect("Select Preferred Categories", resources['cate
 # Recommendation Method
 rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Based', 'Collaborative', 'Hybrid', 'Machine Learning'])
 
+# Search bar
+search_term = st.sidebar.text_input("Search Resources", "")
+
 # Button to generate recommendations
 if st.sidebar.button("Get Recommendations"):
-    # Filter resources by the selected education level, category, and subject tags
+    # Filter resources by the selected education level, category, subject tags, and search term
     filtered_resources = resources[
         (resources['education_level'] == education_level) & 
         (resources['category'].isin(category)) & 
-        (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags)))
+        (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags))) &
+        (resources['name'].str.contains(search_term, case=False) | resources['description'].str.contains(search_term, case=False))
     ]
     
     if filtered_resources.empty:
-        st.warning("No exact resources found for the selected education level, categories, and subjects.")
+        st.warning("No exact resources found for the selected filters.")
         st.info("Showing resources for the selected education level regardless of subjects.")
         filtered_resources = resources[resources['education_level'] == education_level]
     
@@ -108,3 +116,12 @@ if st.sidebar.button("Get Recommendations"):
             st.markdown("---")
     else:
         st.error("No resources found even after relaxing the filters.")
+
+# Display all resources if no filter is applied
+if not st.sidebar.button("Get Recommendations"):
+    st.subheader("All Available Resources:")
+    for index, row in resources.iterrows():
+        st.markdown(f"### [{row['name']}]({row['url']})")
+        st.write(f"**Category:** {row['category']}")
+        st.write(f"**Description:** {row['description']}")
+        st.markdown("---")
