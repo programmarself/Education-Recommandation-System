@@ -86,70 +86,48 @@ category = st.sidebar.multiselect("Select Preferred Categories", resources['cate
 # Recommendation Method
 rec_method = st.sidebar.selectbox("Select Recommendation Method", ['Content-Based', 'Collaborative', 'Hybrid', 'Machine Learning'])
 
-# Search bar
-search_term = st.sidebar.text_input("Search Topics", "")
-
 # Button to generate recommendations
 get_recommendations = st.sidebar.button("Get Recommendations")
 
 # Logic to display recommendations or all resources
 if get_recommendations:
-    if search_term:
-        # Search term handling
-        search_term_lower = search_term.lower()
-        matched_resources = []
-
-        # Find matching resources based on the topic-to-resources mapping
-        for term, names in topic_to_resources.items():
-            if search_term_lower in term.lower():
-                matched_resources.extend(names)
-
-        st.write(f"Matched Resources Based on Topic Mapping: {matched_resources}")
-
-        if matched_resources:
-            filtered_resources = resources[resources['name'].isin(matched_resources)]
-        else:
-            st.write("No direct matches found, applying broader filters...")
-            # If no exact matches found, search based on broader criteria
-            filtered_resources = resources[
-                (resources['education_level'] == education_level) & 
-                (resources['category'].isin(category)) & 
-                (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags))) &
-                (resources['name'].str.contains(search_term, case=False) | resources['description'].str.contains(search_term, case=False))
-            ]
-        
-        st.write(f"Filtered Resources: {filtered_resources}")
-
-        if filtered_resources.empty:
-            st.warning("No resources found for the selected filters.")
-            st.info("Showing all resources for the selected education level.")
-            filtered_resources = resources[resources['education_level'] == education_level]
+    # Apply filters to resources
+    filtered_resources = resources[
+        (resources['education_level'] == education_level) & 
+        (resources['category'].isin(category)) & 
+        (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags)))
+    ]
     
-        if not filtered_resources.empty:
-            if rec_method == 'Content-Based':
-                sample_resource = filtered_resources.iloc[0]['name']
-                recs = get_content_based_recommendations(sample_resource)
-            elif rec_method == 'Collaborative':
-                recs = get_collaborative_recommendations(user_id)
-            elif rec_method == 'Hybrid':
-                sample_resource = filtered_resources.iloc[0]['name']
-                recs = get_hybrid_recommendations(user_id, sample_resource)
-            else:
-                recs = get_ml_recommendations(user_id)
-            
-            # Display recommendations as clickable links
-            st.subheader("Recommended Resources:")
-            for index, row in recs.iterrows():
-                st.markdown(f"### [{row['name']}]({row['url']})")
-                st.write(f"**Category:** {row['category']}")
-                st.write(f"**Description:** {row['description']}")
-                st.markdown("---")
+    if filtered_resources.empty:
+        st.warning("No resources found for the selected filters.")
+        st.info("Showing all resources for the selected education level.")
+        filtered_resources = resources[resources['education_level'] == education_level]
+    
+    if not filtered_resources.empty:
+        if rec_method == 'Content-Based':
+            sample_resource = filtered_resources.iloc[0]['name']
+            recs = get_content_based_recommendations(sample_resource)
+        elif rec_method == 'Collaborative':
+            recs = get_collaborative_recommendations(user_id)
+        elif rec_method == 'Hybrid':
+            sample_resource = filtered_resources.iloc[0]['name']
+            recs = get_hybrid_recommendations(user_id, sample_resource)
         else:
-            st.error("No resources found even after relaxing the filters.")
-    else:
-        st.subheader("All Available Resources:")
-        for index, row in resources.iterrows():
+            recs = get_ml_recommendations(user_id)
+        
+        # Display recommendations as clickable links
+        st.subheader("Recommended Resources:")
+        for index, row in recs.iterrows():
             st.markdown(f"### [{row['name']}]({row['url']})")
             st.write(f"**Category:** {row['category']}")
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
+    else:
+        st.error("No resources found even after relaxing the filters.")
+else:
+    st.subheader("All Available Resources:")
+    for index, row in resources.iterrows():
+        st.markdown(f"### [{row['name']}]({row['url']})")
+        st.write(f"**Category:** {row['category']}")
+        st.write(f"**Description:** {row['description']}")
+        st.markdown("---")
