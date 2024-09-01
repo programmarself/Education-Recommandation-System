@@ -96,9 +96,10 @@ get_recommendations = st.sidebar.button("Get Recommendations")
 if get_recommendations:
     if search_term:
         # Use the predefined topic-to-resources mapping
-        if search_term.lower() in topic_to_resources:
-            resource_names = topic_to_resources[search_term.lower()]
-            filtered_resources = resources[resources['name'].isin(resource_names)]
+        search_term_lower = search_term.lower()
+        matched_resources = [name for term, names in topic_to_resources.items() if search_term_lower in term]
+        if matched_resources:
+            filtered_resources = resources[resources['name'].isin(matched_resources)]
         else:
             # Search based on general criteria
             filtered_resources = resources[
