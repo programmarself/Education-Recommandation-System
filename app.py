@@ -1,7 +1,7 @@
 ﻿import streamlit as st
 import pandas as pd
 
-# Define the extended resources DataFrame with more detailed mappings
+# Define the extended resources DataFrame with detailed mappings
 resources = pd.DataFrame({
     'resource_id': list(range(1, 13)),
     'name': [
@@ -30,37 +30,16 @@ resources = pd.DataFrame({
     ]
 })
 
-# Define a mapping from specific topics to resources
+# Define a mapping from topics to resources
 topic_to_resources = {
-    'types of speed': resources[resources['tags'].str.contains('physics', case=False)],
-    'types of energy': resources[resources['tags'].str.contains('physics', case=False)],
-    'quantum mechanics': resources[resources['tags'].str.contains('physics', case=False)],
-    'computer science': resources[resources['tags'].str.contains('computer science', case=False)],
-    'machine learning': resources[resources['tags'].str.contains('machine learning', case=False)],
-    'coding': resources[resources['tags'].str.contains('coding', case=False)],
-    'finance': resources[resources['tags'].str.contains('finance', case=False)]
+    'types of speed': ['Khan Academy', 'MIT OpenCourseWare'],
+    'types of energy': ['Khan Academy', 'Coursera'],
+    'quantum mechanics': ['MIT OpenCourseWare', 'Coursera'],
+    'computer science': ['Coursera', 'LinkedIn Learning', 'Codecademy'],
+    'machine learning': ['Coursera', 'Udacity'],
+    'coding': ['Codecademy', 'LinkedIn Learning'],
+    'finance': ['Finance Academy', 'Coursera']
 }
-
-# Sample function to simulate content-based recommendations
-def get_content_based_recommendations(resource_name):
-    # Placeholder function: you'd compute similarity scores in a real implementation
-    similar_resources = resources[resources['name'] != resource_name]
-    return similar_resources
-
-# Sample function to simulate collaborative filtering recommendations
-def get_collaborative_recommendations(user_id):
-    # Placeholder function: you'd use user-based collaborative filtering in a real implementation
-    return resources.sample(3)
-
-# Sample function to simulate hybrid recommendations
-def get_hybrid_recommendations(user_id, resource_name):
-    # Placeholder function: you'd combine content-based and collaborative filtering in a real implementation
-    return resources.sample(3)
-
-# Sample function to simulate machine learning recommendations
-def get_ml_recommendations(user_id):
-    # Placeholder function: you'd use a trained ML model in a real implementation
-    return resources.sample(3)
 
 # Streamlit application code
 
@@ -99,8 +78,10 @@ if get_recommendations:
     if search_term:
         # Use the predefined topic-to-resources mapping
         if search_term.lower() in topic_to_resources:
-            filtered_resources = topic_to_resources[search_term.lower()]
+            resource_names = topic_to_resources[search_term.lower()]
+            filtered_resources = resources[resources['name'].isin(resource_names)]
         else:
+            # Search based on general criteria
             filtered_resources = resources[
                 (resources['education_level'] == education_level) & 
                 (resources['category'].isin(category)) & 
