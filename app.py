@@ -50,9 +50,10 @@ def get_ml_recommendations(user_id):
     return resources.sample(3)
 
 # Streamlit application code
+st.set_page_config(page_title="Educational Resource Recommender", page_icon=":book:", layout="wide")
 
-# Title
 st.title("Educational Resource Recommender System")
+st.markdown("<hr>", unsafe_allow_html=True)
 
 # Sidebar for user input
 st.sidebar.header("User Preferences")
@@ -80,15 +81,15 @@ get_recommendations = st.sidebar.button("Get Recommendations")
 
 # Logic to display recommendations or all resources
 if get_recommendations:
-    # Apply filters to resources
     filtered_resources = resources[
         (resources['education_level'] == education_level) & 
         (resources['category'].isin(category)) & 
         (resources['tags'].apply(lambda x: any(tag in x for tag in subject_tags)))
     ]
-    
+
     if filtered_resources.empty:
-        # Show all resources for the selected education level if no filtered results
+        st.warning("No resources found for the selected filters.")
+        st.info("Showing all resources for the selected education level.")
         filtered_resources = resources[resources['education_level'] == education_level]
     
     if not filtered_resources.empty:
@@ -103,13 +104,14 @@ if get_recommendations:
         else:
             recs = get_ml_recommendations(user_id)
         
-        # Display recommendations as clickable links
         st.subheader("Recommended Resources:")
         for index, row in recs.iterrows():
             st.markdown(f"### [{row['name']}]({row['url']})")
             st.write(f"**Category:** {row['category']}")
             st.write(f"**Description:** {row['description']}")
             st.markdown("---")
+    else:
+        st.error("No resources found even after relaxing the filters.")
 else:
     st.subheader("All Available Resources:")
     for index, row in resources.iterrows():
@@ -117,3 +119,6 @@ else:
         st.write(f"**Category:** {row['category']}")
         st.write(f"**Description:** {row['description']}")
         st.markdown("---")
+
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("**Developed By:** Irfan Ullah Khan", unsafe_allow_html=True)
